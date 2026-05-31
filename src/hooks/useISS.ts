@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { fetchISSPosition } from '../services/iss'
 import type { ISSPosition } from '../types'
 
@@ -8,27 +8,33 @@ export function useISS() {
   const [position, setPosition] = useState<ISSPosition | null>(null)
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState<string | null>(null)
+  const abortRef                = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    let cancelled = false
-
     const fetchAndUpdate = async () => {
+      abortRef.current?.abort()
+      const controller  = new AbortController()
+      abortRef.current  = controller
+
       try {
-        const pos = await fetchISSPosition()
-        if (!cancelled) {
-          setPosition(pos)
-          setError(null)
+        const pos = await fetchISSPosition(controller.signal)
+        setPosition(pos)
+        setError(null)
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError' && (err as { code?: string }).code !== 'ERR_CANCELED') {
+          setError('Erro ao obter posição da ISS.')
         }
-      } catch {
-        if (!cancelled) setError('Erro ao obter posição da ISS.')
       } finally {
-        if (!cancelled) setLoading(false)
+        if (!controller.signal.aborted) setLoading(false)
       }
     }
 
     fetchAndUpdate()
     const interval = setInterval(fetchAndUpdate, REFRESH_INTERVAL)
-    return () => { cancelled = true; clearInterval(interval) }
+    return () => {
+      clearInterval(interval)
+      abortRef.current?.abort()
+    }
   }, [])
 
   return { position, loading, error }

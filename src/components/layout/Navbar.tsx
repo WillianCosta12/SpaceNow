@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { m } from '../../lib/motion'
 import { Telescope, Menu, X } from 'lucide-react'
 
 const links = [
@@ -19,7 +19,7 @@ export function Navbar() {
   }, [])
 
   return (
-    <motion.header
+    <m.header
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -70,6 +70,6 @@ export function Navbar() {
           ))}
         </div>
       )}
-    </motion.header>
+    </m.header>
   )
 }

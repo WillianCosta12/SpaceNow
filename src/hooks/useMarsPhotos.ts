@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { fetchMarsPhotos } from '../services/nasa'
 import type { MarsPhoto } from '../types'
 
@@ -10,6 +10,7 @@ export function useMarsPhotos() {
   const [error, setError]     = useState<string | null>(null)
   const [date, setDate]       = useState(DEFAULT_DATE)
   const [page, setPage]       = useState(1)
+  const [counter, setCounter] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -26,7 +27,9 @@ export function useMarsPhotos() {
         if (!cancelled) setLoading(false)
       })
     return () => { cancelled = true }
-  }, [date, page])
+  }, [date, page, counter])
 
-  return { photos, loading, error, date, setDate, page, setPage }
+  const refetch = useCallback(() => setCounter(c => c + 1), [])
+
+  return { photos, loading, error, date, setDate, page, setPage, refetch }
 }

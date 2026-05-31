@@ -3,8 +3,8 @@ import type { ISSPosition } from '../types'
 
 const ISS_API = 'https://api.wheretheiss.at/v1/satellites/25544'
 
-export async function fetchISSPosition(): Promise<ISSPosition> {
-  const { data } = await axios.get(ISS_API)
+export async function fetchISSPosition(signal?: AbortSignal): Promise<ISSPosition> {
+  const { data } = await axios.get(ISS_API, { signal })
   return {
     latitude:  data.latitude,
     longitude: data.longitude,

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from '../../lib/motion'
 import { Satellite, Gauge, Navigation, Clock } from 'lucide-react'
 import type { ISSPosition } from '../../types'
 
@@ -22,12 +22,12 @@ export function ISSStats({ position, loading }: Props) {
     <div className="space-y-3 h-full flex flex-col justify-between">
       <div className="glass rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-4">
-          <motion.div
+          <m.div
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
           >
             <Satellite className="w-5 h-5 text-nebula-light" />
-          </motion.div>
+          </m.div>
           <span className="font-display font-semibold text-star">Estação Espacial</span>
           <span className="ml-auto flex items-center gap-1 text-xs text-green-400">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />

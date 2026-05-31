@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from '../../lib/motion'
 import { Calendar, ExternalLink, Download } from 'lucide-react'
 import { useAPOD } from '../../hooks/useAPOD'
 import { SectionHeader } from '../ui/SectionHeader'
@@ -35,7 +35,7 @@ export function APODSection() {
         {error   && <ErrorState message={error} onRetry={() => reload(date || undefined)} />}
 
         {data && !loading && (
-          <motion.div
+          <m.div
             key={data.date}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -49,6 +49,7 @@ export function APODSection() {
                   src={data.url}
                   alt={data.title}
                   className="w-full h-full object-cover"
+                  fetchPriority="high"
                 />
               ) : (
                 <iframe
@@ -90,7 +91,7 @@ export function APODSection() {
                 Ver no site da NASA <ExternalLink className="w-3 h-3" />
               </a>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </div>
     </section>
