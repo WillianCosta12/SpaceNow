@@ -6,6 +6,7 @@ const REFRESH_INTERVAL = 5000
 
 export function useISS() {
   const [position, setPosition] = useState<ISSPosition | null>(null)
+  const [trail, setTrail]       = useState<ISSPosition[]>([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState<string | null>(null)
   const abortRef                = useRef<AbortController | null>(null)
@@ -19,6 +20,7 @@ export function useISS() {
       try {
         const pos = await fetchISSPosition(controller.signal)
         setPosition(pos)
+        setTrail(prev => [...prev.slice(-19), pos])
         setError(null)
       } catch (err) {
         if ((err as Error).name !== 'AbortError' && (err as { code?: string }).code !== 'ERR_CANCELED') {
@@ -37,5 +39,5 @@ export function useISS() {
     }
   }, [])
 
-  return { position, loading, error }
+  return { position, trail, loading, error }
 }

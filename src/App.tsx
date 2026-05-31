@@ -5,17 +5,25 @@ import { APODSection } from './components/apod/APODSection'
 import { MarsSection } from './components/mars/MarsSection'
 import { ISSSection } from './components/iss/ISSSection'
 import { LazyMotion, domAnimation, m } from './lib/motion'
+import { useReducedMotion } from './hooks/useReducedMotion'
+import { useLang } from './contexts/LangContext'
+import { t } from './i18n'
 import { Telescope, Rocket } from 'lucide-react'
 
 function HeroSection() {
+  const rm          = useReducedMotion()
+  const instant     = { duration: 0, delay: 0 }
+  const { lang }    = useLang()
+  const tr          = t[lang]
+
   return (
     <section className="min-h-screen flex items-center justify-center relative">
       <div className="absolute inset-0 bg-gradient-to-b from-nebula-muted/10 via-transparent to-transparent pointer-events-none" />
       <div className="text-center px-6 relative z-10">
         <m.div
-          initial={{ scale: 0, rotate: -180 }}
+          initial={{ scale: rm ? 1 : 0, rotate: rm ? 0 : -180 }}
           animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.2 }}
+          transition={rm ? instant : { type: 'spring', stiffness: 200, damping: 20, delay: 0.2 }}
           className="flex justify-center mb-6"
         >
           <div className="p-4 rounded-2xl glass glow-purple">
@@ -24,9 +32,9 @@ function HeroSection() {
         </m.div>
 
         <m.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: rm ? 0 : 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          transition={rm ? instant : { duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="font-display text-5xl sm:text-7xl font-bold mb-4"
           style={{
             background: 'linear-gradient(135deg, #F8FAFC 0%, #A78BFA 50%, #7C3AED 100%)',
@@ -38,28 +46,28 @@ function HeroSection() {
         </m.h1>
 
         <m.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: rm ? 0 : 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
+          transition={rm ? instant : { duration: 0.6, delay: 0.6 }}
           className="text-star-muted text-lg max-w-xl mx-auto mb-10 leading-relaxed"
         >
-          Explore o universo em tempo real. Fotos da NASA, superfície de Marte e a posição ao vivo da Estação Espacial Internacional.
+          {tr.hero.subtitle}
         </m.p>
 
         <m.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: rm ? 0 : 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
+          transition={rm ? instant : { duration: 0.5, delay: 0.8 }}
           className="flex flex-wrap items-center justify-center gap-4"
         >
           <m.a
             href="#apod"
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={rm ? {} : { scale: 1.05, y: -2 }}
+            whileTap={rm ? {} : { scale: 0.97 }}
             className="flex items-center gap-2 px-6 py-3 rounded-xl bg-nebula text-star font-semibold text-sm glow-purple transition-all hover:bg-nebula/90"
           >
             <Rocket className="w-4 h-4" />
-            Explorar
+            {tr.hero.cta}
           </m.a>
           <a
             href="https://api.nasa.gov"
@@ -67,14 +75,14 @@ function HeroSection() {
             rel="noopener noreferrer"
             className="px-6 py-3 rounded-xl border border-nebula-border text-nebula-light text-sm hover:bg-nebula-muted transition-all"
           >
-            NASA Open APIs
+            {tr.hero.nasaApi}
           </a>
         </m.div>
 
         <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
+          transition={rm ? instant : { delay: 1.2 }}
           className="flex flex-wrap justify-center gap-2 mt-10"
         >
           {['NASA APOD', 'Mars Rover', 'ISS Tracker'].map((api) => (
@@ -88,14 +96,17 @@ function HeroSection() {
       <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
+        transition={rm ? instant : { delay: 1.5 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2"
       >
-        <m.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+        <m.div
+          animate={rm ? {} : { y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
           <div className="w-5 h-8 rounded-full border-2 border-nebula-border flex items-start justify-center p-1">
             <m.div
               className="w-1 h-2 rounded-full bg-nebula-light"
-              animate={{ y: [0, 12, 0], opacity: [1, 0.3, 1] }}
+              animate={rm ? {} : { y: [0, 8, 0], opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             />
           </div>
@@ -113,8 +124,11 @@ function App() {
         <Navbar />
         <main>
           <HeroSection />
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-nebula-border to-transparent" />
           <APODSection />
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-nebula-border to-transparent" />
           <MarsSection />
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-nebula-border to-transparent" />
           <ISSSection />
         </main>
         <Footer />

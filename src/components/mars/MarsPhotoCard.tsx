@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from '../../lib/motion'
 import type { MarsPhoto } from '../../types'
 
 interface Props {
@@ -9,11 +9,15 @@ interface Props {
 
 export function MarsPhotoCard({ photo, index, onClick }: Props) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, delay: index * 0.04 }}
+      role="button"
+      tabIndex={0}
+      aria-label={`Ver foto - ${photo.camera.full_name} - ${photo.earth_date}`}
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }}
       className="group relative rounded-xl overflow-hidden border border-space-700 hover:border-nebula-border cursor-pointer aspect-square bg-space-800 transition-all"
     >
       <img
@@ -28,6 +32,6 @@ export function MarsPhotoCard({ photo, index, onClick }: Props) {
           <p className="text-star-dim text-xs">{photo.earth_date}</p>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }

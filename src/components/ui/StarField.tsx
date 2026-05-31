@@ -10,8 +10,9 @@ interface Star {
 }
 
 export function StarField() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const rafRef    = useRef<number>(0)
+  const canvasRef     = useRef<HTMLCanvasElement>(null)
+  const rafRef        = useRef<number>(0)
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const stars = useMemo<Star[]>(() =>
     Array.from({ length: 80 }, () => ({
@@ -41,7 +42,22 @@ export function StarField() {
     resize()
     window.addEventListener('resize', resize)
 
+    if (reducedMotion) {
+      ctx.clearRect(0, 0, width, height)
+      for (const star of stars) {
+        ctx.beginPath()
+        ctx.arc(star.x * width, star.y * height, star.size / 2, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255,255,255,${star.baseOpacity.toFixed(3)})`
+        ctx.fill()
+      }
+      return () => window.removeEventListener('resize', resize)
+    }
+
     function draw(t: number) {
+      if (document.visibilityState === 'hidden') {
+        rafRef.current = requestAnimationFrame(draw)
+        return
+      }
       ctx!.clearRect(0, 0, width, height)
       for (const star of stars) {
         const pulse   = Math.sin(t / (star.speed * 1000) + star.offset)
@@ -60,7 +76,7 @@ export function StarField() {
       window.removeEventListener('resize', resize)
       cancelAnimationFrame(rafRef.current)
     }
-  }, [stars])
+  }, [stars, reducedMotion])
 
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />
 }

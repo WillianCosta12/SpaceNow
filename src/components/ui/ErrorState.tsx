@@ -1,4 +1,6 @@
 import { AlertTriangle, RefreshCw } from 'lucide-react'
+import { useLang } from '../../contexts/LangContext'
+import { t } from '../../i18n'
 
 interface ErrorStateProps {
   message: string
@@ -6,6 +8,8 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
+  const { lang } = useLang()
+
   return (
     <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
       <AlertTriangle className="w-10 h-10 text-red-400" />
@@ -16,7 +20,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
           className="flex items-center gap-2 px-4 py-2 rounded-lg border border-nebula-border text-nebula-light hover:bg-nebula-muted transition-colors text-sm"
         >
           <RefreshCw className="w-4 h-4" />
-          Tentar novamente
+          {t[lang].error.retry}
         </button>
       )}
     </div>

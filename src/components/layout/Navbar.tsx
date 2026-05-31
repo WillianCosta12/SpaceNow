@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react'
 import { m } from '../../lib/motion'
 import { Telescope, Menu, X } from 'lucide-react'
-
-const links = [
-  { label: 'Foto do Dia', href: '#apod' },
-  { label: 'Marte',       href: '#mars' },
-  { label: 'ISS',         href: '#iss'  },
-]
+import { useLang } from '../../contexts/LangContext'
+import { t } from '../../i18n'
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen]         = useState(false)
+  const { lang, toggleLang }    = useLang()
+  const tr                      = t[lang]
+
+  const links = [
+    { label: tr.nav.apod, href: '#apod' },
+    { label: tr.nav.mars, href: '#mars' },
+    { label: tr.nav.iss,  href: '#iss'  },
+  ]
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20)
@@ -36,14 +40,16 @@ export function Navbar() {
         {/* Desktop */}
         <nav className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-sm text-star-muted hover:text-star transition-colors"
-            >
+            <a key={l.href} href={l.href} className="text-sm text-star-muted hover:text-star transition-colors">
               {l.label}
             </a>
           ))}
+          <button
+            onClick={toggleLang}
+            className="text-xs font-mono px-3 py-1.5 rounded-full border border-space-600 text-star-muted hover:text-star hover:border-nebula-border transition-colors"
+          >
+            {lang === 'pt' ? 'EN' : 'PT'}
+          </button>
           <a
             href="https://api.nasa.gov"
             target="_blank"
@@ -68,6 +74,12 @@ export function Navbar() {
               {l.label}
             </a>
           ))}
+          <button
+            onClick={() => { toggleLang(); setOpen(false) }}
+            className="text-left text-xs font-mono text-star-muted hover:text-star"
+          >
+            {lang === 'pt' ? 'Switch to English' : 'Mudar para Português'}
+          </button>
         </div>
       )}
     </m.header>
