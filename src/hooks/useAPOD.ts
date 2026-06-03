@@ -1,14 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { fetchAPOD } from '../services/nasa'
+import { fetchAPOD, localToday } from '../services/nasa'
 import type { APODData } from '../types'
 
 export function useAPOD(initialDate?: string) {
-  const today = new Date().toISOString().split('T')[0]
-
   const [data, setData]       = useState<APODData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState<string | null>(null)
-  const [date, setDate]       = useState(initialDate || today)
+  const [date, setDate]       = useState(initialDate || localToday())
   const cache                 = useRef(new Map<string, APODData>())
 
   const load = useCallback(async (targetDate?: string) => {
@@ -24,13 +22,10 @@ export function useAPOD(initialDate?: string) {
 
     setLoading(true)
     setError(null)
-    setData(null)  // clear stale data while loading new date
+    setData(null)
 
     try {
       const result = await fetchAPOD(targetDate)
-      if (!result?.date || !result?.title) {
-        throw new Error('Resposta inválida da API da NASA.')
-      }
       cache.current.set(key, result)
       setData(result)
       setError(null)

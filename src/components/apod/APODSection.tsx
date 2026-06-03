@@ -1,6 +1,7 @@
 import { m } from '../../lib/motion'
 import { Calendar, ExternalLink, Download } from 'lucide-react'
 import { useAPOD } from '../../hooks/useAPOD'
+import { localToday } from '../../services/nasa'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { useLang } from '../../contexts/LangContext'
 import { t } from '../../i18n'
@@ -33,7 +34,7 @@ export function APODSection() {
               id="apod-date"
               type="date"
               value={date}
-              max={new Date().toISOString().split('T')[0]}
+              max={localToday()}
               min="1995-06-16"
               onChange={(e) => setDate(e.target.value)}
               className="bg-space-800 border border-nebula-border rounded-lg px-3 py-2 text-star text-sm focus:outline-none focus:border-nebula focus:ring-2 focus:ring-nebula-muted"
