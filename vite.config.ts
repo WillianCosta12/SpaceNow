@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    // Allow CORS in development for NASA API calls
+    cors: true,
+  },
   build: {
     rollupOptions: {
       output: {

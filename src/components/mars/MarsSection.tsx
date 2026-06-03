@@ -87,7 +87,7 @@ export function MarsSection() {
               value={date}
               max={MARS_MAX_DATE}
               min="2012-08-06"
-              onChange={(e) => { setDateAndReset(e.target.value); setPage(1) }}
+              onChange={(e) => setDateAndReset(e.target.value)}
               className="bg-space-800 border border-nebula-border rounded-lg px-3 py-2 text-star text-sm focus:outline-none focus:border-nebula"
             />
           </div>
@@ -95,7 +95,7 @@ export function MarsSection() {
           {/* Filtro de câmera */}
           <select
             value={camera}
-            onChange={(e) => { setCamera(e.target.value); setPage(1) }}
+            onChange={(e) => setCamera(e.target.value)}
             className="bg-space-800 border border-nebula-border rounded-lg px-3 py-2 text-star text-sm focus:outline-none focus:border-nebula"
           >
             <option value="">{tr.mars.allCameras}</option>
@@ -110,7 +110,7 @@ export function MarsSection() {
               {SUGGESTED_DATES.slice(0, 4).map((d) => (
                 <button
                   key={d}
-                  onClick={() => { setDateAndReset(d); setPage(1) }}
+                  onClick={() => setDateAndReset(d)}
                   className={`shrink-0 text-xs font-mono px-3 py-1 rounded-full border transition-all ${
                     date === d
                       ? 'bg-nebula text-star border-nebula'
@@ -125,7 +125,9 @@ export function MarsSection() {
         </div>
 
         {loading && <MarsSkeleton />}
-        {error && photos.length === 0 && <ErrorState message={tr.mars.error} onRetry={refetch} />}
+        {error && !loading && photos.length === 0 && (
+          <ErrorState message={error} onRetry={refetch} />
+        )}
 
         {!loading && !error && photos.length === 0 && (
           <div className="text-center py-16 text-star-muted">

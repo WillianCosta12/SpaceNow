@@ -10,6 +10,16 @@ export interface APODData {
   service_version: string
 }
 
+// NASA API error response shape
+export interface NASAErrorResponse {
+  errors?: string[]
+  error?: {
+    code: string
+    message: string
+  }
+  msg?: string
+}
+
 // Mars Rover
 export interface MarsPhoto {
   id: number
@@ -33,6 +43,7 @@ export interface MarsPhoto {
 
 export interface MarsPhotosResponse {
   photos: MarsPhoto[]
+  errors?: string[]
 }
 
 // ISS

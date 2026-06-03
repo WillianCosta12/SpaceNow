@@ -3,10 +3,12 @@ import { fetchAPOD } from '../services/nasa'
 import type { APODData } from '../types'
 
 export function useAPOD(initialDate?: string) {
+  const today = new Date().toISOString().split('T')[0]
+
   const [data, setData]       = useState<APODData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState<string | null>(null)
-  const [date, setDate]       = useState(initialDate || new Date().toISOString().split('T')[0])
+  const [date, setDate]       = useState(initialDate || today)
   const cache                 = useRef(new Map<string, APODData>())
 
   const load = useCallback(async (targetDate?: string) => {
@@ -22,15 +24,20 @@ export function useAPOD(initialDate?: string) {
 
     setLoading(true)
     setError(null)
+    setData(null)  // clear stale data while loading new date
+
     try {
       const result = await fetchAPOD(targetDate)
-      if (!result?.date) throw new Error('Resposta inválida da API')
+      if (!result?.date || !result?.title) {
+        throw new Error('Resposta inválida da API da NASA.')
+      }
       cache.current.set(key, result)
-      setError(null)
       setData(result)
+      setError(null)
     } catch (err) {
-      setError('Erro ao carregar a foto do dia. Tente novamente.')
-      console.error(err)
+      const msg = err instanceof Error ? err.message : 'Erro ao carregar a foto do dia.'
+      setError(msg)
+      setData(null)
     } finally {
       setLoading(false)
     }

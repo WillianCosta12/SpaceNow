@@ -43,7 +43,9 @@ export function APODSection() {
         </div>
 
         {loading && <APODSkeleton />}
-        {error && !data && <ErrorState message={tr.apod.error} onRetry={() => reload(date || undefined)} />}
+        {error && !data && !loading && (
+          <ErrorState message={error} onRetry={() => reload(date || undefined)} />
+        )}
 
         {data && !loading && (
           <m.div
